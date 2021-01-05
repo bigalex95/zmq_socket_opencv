@@ -2,8 +2,8 @@ from imutils.video import FPS
 from threading import Thread
 import numpy as np
 import cv2
-import zmq
-from time import time
+import imagiz
+
 
 class WebcamVideoStream:
     def __init__(self, src=0, device=None):
@@ -74,16 +74,18 @@ def gstreamer_pipeline(
 def main():
     vs1 = WebcamVideoStream(src=gstreamer_pipeline(sensor_id=0), device=cv2.CAP_GSTREAMER).start()
 
-    context = zmq.Context()
-    dst = context.socket(zmq.PUSH)
-    dst.bind("tcp://127.0.0.1:5557")
+    client=imagiz.TCP_Client(server_port=9990,client_name="cc1")
+    encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
 
     fps = FPS().start()
     while True:
         try:
             frame1 = vs1.read()
             frame1 = cv2.rotate(frame1, cv2.ROTATE_90_COUNTERCLOCKWISE)
-            dst.send_pyobj(dict(frame=frame1, ts=time()))
+            r, image = cv2.imencode('.jpg', frame1, encode_param)
+            response=client.send(image)
+            print(response)
+            #cv2.imshow("mean.jpg", frame1)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
             fps.update()
