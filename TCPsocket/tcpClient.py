@@ -74,32 +74,30 @@ def gstreamer_pipeline(
     )
 
 def main():
-    vs1 = WebcamVideoStream(src=gstreamer_pipeline(sensor_id=0), device=cv2.CAP_GSTREAMER).start()
+    cap = cv2.VideoCapture("./../720.mp4")
 
     clientsocket=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-    clientsocket.connect(('localhost',8089))
+    clientsocket.connect(('10.42.0.1',5555))
 
     fps = FPS().start()
     while True:
         try:
-            frame1 = vs1.read()
+            succes, frame1 = cap.read()
             frame1 = cv2.rotate(frame1, cv2.ROTATE_90_COUNTERCLOCKWISE)
             # Serialize frame
             data = pickle.dumps(frame1)
 
             # Send message length first
-            message_size = struct.pack("L", len(data)) ### CHANGED
+            message_size = struct.pack(">L", len(data)) ### CHANGED
 
             # Then data
             clientsocket.sendall(message_size + data)
-            #cv2.imshow("mean.jpg", frame1)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
+            print("send")
             fps.update()
         except Exception as e:
             print(e)
             cv2.destroyAllWindows()
-            vs1.stop()
+            cap.release()
             break
     
     fps.stop()
@@ -107,7 +105,7 @@ def main():
     print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
 
     cv2.destroyAllWindows()
-    vs1.stop()
+    cap.release()
 
 if __name__ == "__main__":
     main()
