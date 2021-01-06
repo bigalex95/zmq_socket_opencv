@@ -6,7 +6,7 @@ import imagiz
 
 
 class WebcamVideoStream:
-    def __init__(self, src=0, device=None):
+    def __init__(self, src, device=None):
         # initialize the video camera stream and read the first frame
         # from the stream
         self.stream = cv2.VideoCapture(src, device)
@@ -72,15 +72,15 @@ def gstreamer_pipeline(
     )
 
 def main():
-    vs1 = WebcamVideoStream(src=gstreamer_pipeline(sensor_id=0), device=cv2.CAP_GSTREAMER).start()
-
-    client=imagiz.Client("cc1",server_ip="localhost")
+    cap = cv2.VideoCapture("./../720.mp4")
+ 
+    client=imagiz.Client("cc1", server_ip="10.42.0.1", server_port=5555)
     encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
 
     fps = FPS().start()
     while True:
         try:
-            frame1 = vs1.read()
+            succes, frame1 = cap.read()
             frame1 = cv2.rotate(frame1, cv2.ROTATE_90_COUNTERCLOCKWISE)
             r, image = cv2.imencode('.jpg', frame1, encode_param)
             client.send(image)
@@ -91,7 +91,7 @@ def main():
         except Exception as e:
             print(e)
             cv2.destroyAllWindows()
-            vs1.stop()
+            cap.release()
             break
     
     fps.stop()
@@ -99,7 +99,7 @@ def main():
     print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
 
     cv2.destroyAllWindows()
-    vs1.stop()
+    cap.release()
 
 if __name__ == "__main__":
     main()

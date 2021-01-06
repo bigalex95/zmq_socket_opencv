@@ -72,25 +72,26 @@ def gstreamer_pipeline(
     )
 
 def main():
-    vs1 = WebcamVideoStream(src=gstreamer_pipeline(sensor_id=0), device=cv2.CAP_GSTREAMER).start()
+    cap = cv2.VideoCapture("./../720.mp4")
 
     context = zmq.Context()
     dst = context.socket(zmq.PUSH)
-    dst.bind("tcp://127.0.0.1:5557")
+    dst.bind("tcp://10.42.0.1:5555")
 
     fps = FPS().start()
     while True:
         try:
-            frame1 = vs1.read()
+            succes, frame1 = cap.read()
             frame1 = cv2.rotate(frame1, cv2.ROTATE_90_COUNTERCLOCKWISE)
             dst.send_pyobj(dict(frame=frame1, ts=time()))
+            print("transfer")
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
             fps.update()
         except Exception as e:
             print(e)
             cv2.destroyAllWindows()
-            vs1.stop()
+            cap.release()
             break
     
     fps.stop()
@@ -98,7 +99,7 @@ def main():
     print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
 
     cv2.destroyAllWindows()
-    vs1.stop()
+    cap.release()
 
 if __name__ == "__main__":
     main()
