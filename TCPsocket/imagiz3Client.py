@@ -74,7 +74,8 @@ def gstreamer_pipeline(
 def main():
     #cap = cv2.VideoCapture("./../720.mp4")
     vs1 = WebcamVideoStream(src=gstreamer_pipeline(sensor_id=0), device=cv2.CAP_GSTREAMER).start()
-
+    vs2 = WebcamVideoStream(src=gstreamer_pipeline(sensor_id=1), device=cv2.CAP_GSTREAMER).start()
+    vs3 = WebcamVideoStream(src=gstreamer_pipeline(sensor_id=2), device=cv2.CAP_GSTREAMER).start()
 
     client=imagiz.TCP_Client(server_ip="10.42.0.1", server_port=5555, client_name="cc1")
     encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
@@ -84,8 +85,16 @@ def main():
         try:
             #success, frame1 = cap.read()
             frame1 = vs1.read()
+            frame2 = vs2.read()
+            frame3 = vs3.read()
             frame1 = cv2.rotate(frame1, cv2.ROTATE_90_COUNTERCLOCKWISE)
             r, image = cv2.imencode('.jpg', frame1, encode_param)
+            response=client.send(image)
+            print(response)
+            r, image = cv2.imencode('.jpg', frame2, encode_param)
+            response=client.send(image)
+            print(response)
+            r, image = cv2.imencode('.jpg', frame3, encode_param)
             response=client.send(image)
             print(response)
             #cv2.imshow("mean.jpg", frame1)
@@ -97,6 +106,8 @@ def main():
             cv2.destroyAllWindows()
             #cap.release()
             vs1.stop()
+            vs2.stop()
+            vs3.stop()
             break
     
     fps.stop()
@@ -106,6 +117,8 @@ def main():
     cv2.destroyAllWindows()
     #cap.release()
     vs1.stop()
+    vs2.stop()
+    vs3.stop()
 
 if __name__ == "__main__":
     main()
