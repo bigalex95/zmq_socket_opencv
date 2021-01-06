@@ -1,13 +1,13 @@
-from imutils.video import FPS
 import cv2
-
 import pickle
 import socket
 import struct
+from imutils.video import FPS
+
 
 def main():
     HOST = ''
-    PORT = 8089
+    PORT = 5555
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     print('Socket created')
