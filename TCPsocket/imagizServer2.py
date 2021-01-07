@@ -14,7 +14,7 @@ def main():
         try:
             message=server.receive()
             frame = cv2.imdecode(message.image,1)
-            cv2.imshow("frame1",frame)
+            cv2.imshow("frame2",frame)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
             fps.update()
