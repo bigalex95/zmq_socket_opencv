@@ -162,7 +162,7 @@ def four_point_transform(rect):
 
 def main():
     pts = np.array([[85, 520], [1330, 520], [80, 1680], [1245, 1775]])
-    vs1 = WebcamVideoStream(src=gstreamer_pipeline(sensor_id=0), device=cv2.CAP_GSTREAMER).start()
+    vs1 = WebcamVideoStream(src=gstreamer_pipeline(sensor_id=3), device=cv2.CAP_GSTREAMER).start()
 
     client=imagiz.TCP_Client(server_ip="10.42.0.1", server_port=5555, client_name="cc1")
     encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
