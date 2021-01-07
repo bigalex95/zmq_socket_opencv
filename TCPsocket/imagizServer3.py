@@ -7,7 +7,7 @@ import imagiz
 def main():
     server=imagiz.TCP_Server(port=5552)
     server.start()
-    cv2.namedWindow("frame1", cv2.WINDOW_NORMAL)
+    cv2.namedWindow("frame3", cv2.WINDOW_NORMAL)
 
     fps = FPS().start()
     while True:
