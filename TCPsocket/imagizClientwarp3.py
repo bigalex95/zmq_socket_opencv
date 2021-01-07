@@ -181,8 +181,8 @@ def main():
             frame1 = cv2.rotate(frame1, cv2.ROTATE_90_COUNTERCLOCKWISE)
             image_np = cv2.warpPerspective(frame1, M, (maxWidth, maxHeight))
             #mean_np = getMeanNP(image_np)
-            #resize = cv2.resize(mean_np, (256, 256), interpolation = cv2.INTER_AREA)
-            r, image = cv2.imencode('.jpg', image_np, encode_param)
+            resize = cv2.resize(image_np, (256, 256), interpolation = cv2.INTER_AREA)
+            r, image = cv2.imencode('.jpg', resize, encode_param)
             response=client.send(image)
             print(response)
             key = cv2.waitKey(1) & 0xFF
