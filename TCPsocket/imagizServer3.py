@@ -5,7 +5,7 @@ import imagiz
 
 
 def main():
-    server=imagiz.TCP_Server(port=5552)
+    server=imagiz.TCP_Server(port=5553)
     server.start()
     cv2.namedWindow("frame3", cv2.WINDOW_NORMAL)
 
