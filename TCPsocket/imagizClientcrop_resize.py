@@ -88,7 +88,7 @@ def main():
             image_tf = tf.convert_to_tensor(frame1)
             crop_tf = tf.image.crop_to_bounding_box(image_tf, 100, 100, 1000-100, 1000-100)
             resize_tf = tf.image.resize(crop_tf, (256, 256))
-            _, image = cv2.imencode('.jpg', crop_tf.numpy(), encode_param)
+            _, image = cv2.imencode('.jpg', resize_tf.numpy(), encode_param)
             response=client.send(image)
             print(response)
             if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -99,7 +99,7 @@ def main():
             vs1.stop()
             break
         except KeyboardInterrupt:
-            print("STOPPEDDDDDDDDDDDDDDDDDDDDDDDDDDDD")
+            print("Keyboard stopped")
             vs1.stop()
 
     
@@ -108,7 +108,7 @@ def main():
     print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
 
     vs1.stop()
-    print("STOPPEDDDDDDDDDDDDDDDDDDDDDDDDDDDD")
+    print("exit main")
 
 if __name__ == "__main__":
     main()
