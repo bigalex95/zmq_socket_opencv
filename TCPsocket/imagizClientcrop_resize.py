@@ -87,7 +87,7 @@ def main():
             #frame1 = cv2.rotate(frame1, cv2.ROTATE_90_COUNTERCLOCKWISE)
             image_tf = tf.convert_to_tensor(frame1)
             crop_tf = tf.image.crop_to_bounding_box(image_tf, 100, 100, 1000-100, 1000-100)
-            #resize_tf = tf.image.resize(crop_tf, (256, 256), method=ResizeMethod.BILINEAR)
+            resize_tf = tf.image.resize(crop_tf, (256, 256), method=ResizeMethod.BILINEAR)
             _, image = cv2.imencode('.jpg', crop_tf.numpy(), encode_param)
             response=client.send(image)
             print(response)
@@ -96,16 +96,19 @@ def main():
             fps.update()
         except Exception as e:
             print(e)
-            cv2.destroyAllWindows()
             vs1.stop()
             break
+        except KeyboardInterrupt:
+            print("STOPPEDDDDDDDDDDDDDDDDDDDDDDDDDDDD")
+            vs1.stop()
+
     
     fps.stop()
     print("[INFO] elasped time: {:.2f}".format(fps.elapsed()))
     print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
 
-    cv2.destroyAllWindows()
     vs1.stop()
+    print("STOPPEDDDDDDDDDDDDDDDDDDDDDDDDDDDD")
 
 if __name__ == "__main__":
     main()
