@@ -87,8 +87,8 @@ def main():
             #frame1 = cv2.rotate(frame1, cv2.ROTATE_90_COUNTERCLOCKWISE)
             image_tf = tf.convert_to_tensor(frame1)
             crop_tf = tf.image.crop_to_bounding_box(image_tf, 100, 100, 100 + 1000, 100 + 1000)
-            resize_tf = tf.image.resize(crop_tf, (256, 256), method=ResizeMethod.BILINEAR)
-            _, image = cv2.imencode('.jpg', resize_tf.numpy(), encode_param)
+            #resize_tf = tf.image.resize(crop_tf, (256, 256), method=ResizeMethod.BILINEAR)
+            _, image = cv2.imencode('.jpg', crop_tf.numpy(), encode_param)
             response=client.send(image)
             print(response)
             if cv2.waitKey(1) & 0xFF == ord('q'):
