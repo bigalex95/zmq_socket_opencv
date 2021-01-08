@@ -101,7 +101,7 @@ def main():
         except KeyboardInterrupt:
             print("Keyboard stopped")
             vs1.stop()
-
+            break
     
     fps.stop()
     print("[INFO] elasped time: {:.2f}".format(fps.elapsed()))
