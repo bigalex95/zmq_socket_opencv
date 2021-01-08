@@ -76,7 +76,7 @@ def main():
     vs1 = WebcamVideoStream(src=gstreamer_pipeline(sensor_id=2), device=cv2.CAP_GSTREAMER).start()
 
 
-    client=imagiz.TCP_Client(server_ip="192.168.55.2", server_port=5552, client_name="cc1")
+    client=imagiz.TCP_Client(server_ip="10.42.0.1", server_port=5552, client_name="cc1")
     encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
 
     fps = FPS().start()
@@ -88,7 +88,7 @@ def main():
             image_tf = tf.convert_to_tensor(frame1)
             crop_tf = tf.image.crop_to_bounding_box(image_tf, 100, 100, 1000, 1000)
             resize_tf = tf.image.resize(crop_tf, (256, 256), method=ResizeMethod.BILINEAR)
-            r, image = cv2.imencode('.jpg', resize_tf, encode_param)
+            _, image = cv2.imencode('.jpg', resize_tf, encode_param)
             response=client.send(image)
             print(response)
             if cv2.waitKey(1) & 0xFF == ord('q'):
