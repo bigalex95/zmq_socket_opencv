@@ -185,26 +185,22 @@ def main():
             r, image = cv2.imencode('.jpg', resize, encode_param)
             response=client.send(image)
             print(response)
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord('q'):
-                break
-            elif key == ord('c'):
-                #cv2.imwrite('strided_filter.jpg', strided_filter.numpy())
-                cv2.imwrite('resize.jpg', resize)
-                break
             fps.update()
         except Exception as e:
-            cv2.destroyAllWindows()
-            vs1.stop()
             print(e)
+            vs1.stop()
+            break
+        except KeyboardInterrupt:
+            print("Keyboard stopped")
+            vs1.stop()
             break
     
     fps.stop()
     print("[INFO] elasped time: {:.2f}".format(fps.elapsed()))
     print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
 
-    cv2.destroyAllWindows()
     vs1.stop()
+    print("exit main")
 
 if __name__ == "__main__":
     main()

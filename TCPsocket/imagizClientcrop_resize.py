@@ -104,8 +104,6 @@ def main():
             _, image = cv2.imencode('.jpg', resize_tf.numpy(), encode_param)
             response=client.send(image)
             print(response)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
             fps.update()
         except Exception as e:
             print(e)

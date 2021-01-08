@@ -73,6 +73,19 @@ def gstreamer_pipeline(
     )
 
 def main():
+
+    gpus = tf.config.experimental.list_physical_devices('GPU')
+    if gpus:
+        try:
+            # Currently, memory growth needs to be the same across GPUs
+            for gpu in gpus:
+                tf.config.experimental.set_memory_growth(gpu, True)
+            logical_gpus = tf.config.experimental.list_logical_devices('GPU')
+            print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
+        except RuntimeError as e:
+            # Memory growth must be set before GPUs have been initialized
+            print(e)
+
     vs1 = WebcamVideoStream(src=gstreamer_pipeline(sensor_id=2), device=cv2.CAP_GSTREAMER).start()
 
 
@@ -86,17 +99,18 @@ def main():
             frame1 = vs1.read()
             #frame1 = cv2.rotate(frame1, cv2.ROTATE_90_COUNTERCLOCKWISE)
             image_tf = tf.convert_to_tensor(frame1)
-            crop_tf = tf.image.crop_to_bounding_box(image_tf, 100, 100, 1000, 1000)
-            resize_tf = tf.image.resize(crop_tf, (256, 256), method=ResizeMethod.BILINEAR)
+            crop_tf = tf.image.crop_to_bounding_box(image_tf, 100, 100, 1000-100, 1000-100)
+            resize_tf = tf.image.resize(crop_tf, (256, 256))
             _, image = cv2.imencode('.jpg', resize_tf.numpy(), encode_param)
             response=client.send(image)
             print(response)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
             fps.update()
         except Exception as e:
             print(e)
-            cv2.destroyAllWindows()
+            vs1.stop()
+            break
+        except KeyboardInterrupt:
+            print("Keyboard stopped")
             vs1.stop()
             break
     
@@ -104,8 +118,8 @@ def main():
     print("[INFO] elasped time: {:.2f}".format(fps.elapsed()))
     print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
 
-    cv2.destroyAllWindows()
     vs1.stop()
+    print("exit main")
 
 if __name__ == "__main__":
     main()
