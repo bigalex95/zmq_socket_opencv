@@ -21,7 +21,6 @@ def main():
         except Exception as e:
             print(e)
             cv2.destroyAllWindows()
-
             break
     
     fps.stop()
@@ -29,6 +28,7 @@ def main():
     print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
 
     cv2.destroyAllWindows()
+    server.stop()
 
 if __name__ == "__main__":
     main()
